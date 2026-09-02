@@ -6,6 +6,7 @@
 2. Header / cabecera
 3. Enlaces / botones
 4. Area destacada
+5. Area experiencia
 */
 
 /* 0. Generales / colores */
@@ -22,6 +23,14 @@
     --color-parrafo:#2d2c2e;
 }
 
+img{
+    width: 100%;
+}
+
+.elements-row{
+    display: flex;
+    justify-content: space-around;
+}
 
 
 /* 1. Tipografia */
@@ -32,9 +41,11 @@
     font-style: normal;
     color: var(--color-principal);
     font-size: 30px;
+    display: flex;
+    justify-content: center;
 }
 
-.titulo-secundariol{
+.titulo-secundario{
     font-family: "Josefin Sans", sans-serif;
     font-optical-sizing: auto;
     font-weight: 400;
@@ -54,6 +65,7 @@
 .texto-oculto{
     display: none;
 }
+
 
 
 
@@ -77,58 +89,72 @@
     font-style: normal;
     color: var(--color-principal);
     font-size: 20px;
-
     text-decoration: none;
-
     padding: 8px 15px 8px 15px;
-
     transition: all linear 0.3s;
-
     border-radius: 3px;
 }
 
 .boton-principal:hover {
     color: aliceblue;
-    background-color: var(--color-principal);
+    background: uar(--color-principal);
 }
 
 
 
 /* 4. Area destacada */
-#area-destacada{
-    padding: 40px 5%;
+#area-destacada {
+   padding: 50px;
 }
 
-#area-destacada > div{
-    display: flex;
-    justify-content: space-between;
-    gap: 25px;
+.articulo-index{
+    /* Relleno top right bottom left */
+    padding: 20px;
 }
 
-#area-destacada article{
-    width: 32%;
-    display: flex;
-    flex-direction: column;
-}
-
-#area-destacada img{
-    width: 100%;
-    height: 220px;
-    object-fit: cover;
-}
-
-#area-destacada h3{
-    margin-top: 15px;
-}
-
-#area-destacada p{
-    margin-top: 10px;
+.articulo-index * {
+    /* Relleno top right bottom left */
+    margin: 0 0 10px 0;
 }
 
 
+.boton-ver-mas{
+    font-family: "Josefin Sans", sans-serif;
+    font-optical-sizing: auto;
+    font-weight: 400;
+    font-style: normal;
+    color: aliceblue;
+    font-size: 20px;
+    text-decoration: none;
+    padding: 8px 15px 8px 15px;
+    transition: all linear 0.3s;
+    border-radius: 3px;
+    background-color: var(--color-principal);
+}
+
+
+.boton-ver-mas:hover {
+    color: aliceblue;
+    background-color: var(--color-tercer);
+}
+
+/* 5. Area experiencia*/
+#area-experiencia{
+    padding: 100px 0;
+    background-color: #2d2c2e;
+}
+
+#area-experiencia video{
+    margin: 30px 5%;
+}
 
 /* Responsive */
 @media only screen and (max-width: 600px){
+
+    .elements-row {
+        flex-direction: column;
+         align-items: center;
+    }
 
     /* 2. Header / cabecera */
     #cabecera-principal{
