@@ -1,0 +1,271 @@
+/* Indice de estilo 
+
+0. Generales / colores
+1. Tipografia 
+2. Header / cabecera
+3. Enlaces / botones
+4. Area destacada / Tarjetas
+5. Area experiencia / Video
+6. Mapa y Footer
+7. Responsive
+*/
+
+/* 0. Generales / colores */
+* {
+    margin: 0;
+    padding: 0; 
+    box-sizing: border-box;
+}
+
+:root {
+    --color-raspberry: #8C0037;
+    --color-lemon-zest: #FFCD7C;
+    --color-butter-cream: #FFFADA;
+    --color-honey: #EF9300;
+    --color-lipstick: #E94584;
+    --color-texto: #333333;
+    --color-blanco: #FFFFFF;
+}
+
+body {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    background-color: var(--color-butter-cream);
+    color: var(--color-texto);
+    line-height: 1.6;
+}
+
+main {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 30px 20px;
+}
+
+.section {
+    margin-bottom: 50px;
+}
+
+
+/* 1. Tipografia */
+.main-title {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-weight: 700;
+    color: var(--color-raspberry);
+    font-size: 2rem;
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.section-title {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-weight: 600;
+    color: var(--color-raspberry);
+    font-size: 1.5rem;
+    text-align: center;
+    margin-bottom: 25px;
+}
+
+
+/* 2. Header / cabecera */
+.header {
+    background-color: var(--color-blanco);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 5%;
+    border-bottom: 3px solid var(--color-lemon-zest);
+}
+
+.logo img {
+    height: auto;
+    max-width: 160px;
+    display: block;
+}
+
+.nav {
+    display: flex;
+    gap: 20px;
+}
+
+
+/* 3. Enlaces / botones */
+.nav a {
+    text-decoration: none;
+    color: var(--color-raspberry);
+    font-weight: 600;
+    font-size: 0.95rem;
+    transition: color 0.3s;
+}
+
+.nav a:hover {
+    color: var(--color-lipstick);
+}
+
+.btn {
+    display: inline-block;
+    background-color: var(--color-honey);
+    color: var(--color-blanco);
+    text-decoration: none;
+    padding: 10px 20px;
+    border-radius: 20px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    text-align: center;
+    transition: background-color 0.3s;
+    align-self: flex-start;
+}
+
+.btn:hover {
+    background-color: var(--color-lipstick);
+}
+
+.btn-secondary {
+    background-color: var(--color-lemon-zest);
+    color: var(--color-raspberry);
+}
+
+.btn-secondary:hover {
+    background-color: var(--color-honey);
+    color: var(--color-blanco);
+}
+
+
+/* 4. Area destacada / Tarjetas */
+.grid-cards {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 25px;
+    justify-content: center;
+}
+
+.card {
+    background-color: var(--color-blanco);
+    border-radius: 16px;
+    overflow: hidden;
+    flex: 1 1 300px;
+    max-width: 350px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    display: flex;
+    flex-direction: column;
+}
+
+.card-img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+}
+
+.card-content {
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+}
+
+.card-content h3 {
+    color: var(--color-raspberry);
+    font-size: 1.2rem;
+    margin-bottom: 10px;
+}
+
+.card-content p {
+    font-size: 0.9rem;
+    margin-bottom: 20px;
+    flex-grow: 1;
+}
+
+
+/* 5. Area experiencia / Video */
+.video-container {
+    width: 100%;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.video-container video {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+
+
+/* 6. Mapa y Footer */
+.map-container {
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.footer {
+    background-color: var(--color-raspberry);
+    color: var(--color-blanco);
+    padding: 40px 20px;
+    margin-top: 40px;
+}
+
+.footer-container {
+    max-width: 1100px;
+    margin: 0 auto;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 30px;
+    align-items: center;
+}
+
+.footer-brand img {
+    background-color: var(--color-blanco);
+    padding: 10px;
+    border-radius: 12px;
+}
+
+.footer-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 40px;
+    flex-grow: 1;
+}
+
+.footer-col h3 {
+    color: var(--color-lemon-zest);
+    font-size: 1rem;
+    margin-bottom: 12px;
+}
+
+.footer-col ul {
+    list-style: none;
+}
+
+.footer-col ul li {
+    margin-bottom: 8px;
+}
+
+.footer-col a {
+    color: var(--color-blanco);
+    text-decoration: none;
+    font-size: 0.85rem;
+    transition: opacity 0.3s;
+}
+
+.footer-col a:hover {
+    opacity: 0.8;
+    text-decoration: underline;
+}
+
+
+/* 7. Responsive */
+@media only screen and (max-width: 768px) {
+    .header {
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .footer-container {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .footer-links {
+        flex-direction: column;
+        gap: 20px;
+    }
+}
