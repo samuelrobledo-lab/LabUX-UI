@@ -3,7 +3,7 @@
    1. Tema día / noche            5. Concept photos: escenario desde Figma
    2. Header: sección actual      6. Carruseles (solo uno activo a la vez)
    7b. Tracklist: audio + vinilo
-   9. Merch: filtros, álbumes (unboxing) y camisetas
+   9. Merch: filtros, álbumes (hover de Figma) y camisetas
    3. Grietas y triángulos        7. Parallax (textos, fondo, fotos + logos)
    4. Hero: la foto se rompe al hacer scroll
    ========================================================= */
@@ -13,12 +13,29 @@
   const $$ = (s, c = document) => Array.from(c.querySelectorAll(s));
   const root = document.documentElement;
   root.classList.add('js');
+
+  /* ---------- 0. Siempre abrir en el top hero ----------
+     Los navegadores (sobre todo en el celular) recuerdan dónde ibas o siguen el #enlace de la URL
+     y abren la página a mitad de camino. Aquí se desactiva eso y se vuelve al inicio. */
+  if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+  if (location.hash) history.replaceState(null, '', location.pathname + location.search);
+  const alInicio = () => window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
+  alInicio();
+  window.addEventListener('load', alInicio);
+  window.addEventListener('pageshow', e => { if (e.persisted) alInicio(); });
   const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   /* ---------- 1. Tema ---------- */
   const themeBtns = $$('[data-set-theme]');
   function setTheme(t) {
+    // Cambiar de modo cambia algunas alturas (fotos, tarjetas): se conserva el punto donde estabas
+    const y = window.scrollY;
     root.setAttribute('data-theme', t);
+    const volver = () => { if (Math.abs(window.scrollY - y) > 2) window.scrollTo({ top: y, behavior: 'instant' }); };
+    requestAnimationFrame(volver); setTimeout(volver, 250);
+    // La foto del hero es un fondo CSS: su texto alternativo cambia con el modo
+    const fondo = $('.hero__fondo');
+    if (fondo) fondo.setAttribute('aria-label', t === 'light' ? fondo.dataset.altDia : fondo.dataset.altNoche);
     themeBtns.forEach(b => b.setAttribute('aria-pressed', String(b.dataset.setTheme === t)));
     try { localStorage.setItem('tema', t); } catch (e) {}
   }
@@ -263,6 +280,66 @@
     return el;
   }
 
+  // Texto alternativo de cada foto (describe lo que se ve)
+  const ALT_FOTOS = {
+      "beomgyu_end-2": "Beomgyu en primer plano, con cabello castaño rojizo y camiseta blanca, sobre un fondo lila suave",
+      "beomgyu_end-4": "Beomgyu de frente entre dos integrantes vistos de espaldas, todos con camisetas blancas sin mangas",
+      "beomgyu_end-5": "Retrato en blanco y negro de Beomgyu con camiseta blanca sin mangas",
+      "hueningkai_end-2": "Hueningkai en primer plano con camiseta blanca, sobre un fondo lila suave",
+      "hueningkai_end-4": "Hueningkai de frente entre dos integrantes vistos de espaldas, con camisetas blancas",
+      "hueningkai_end-5": "Retrato en blanco y negro de Hueningkai con camiseta blanca",
+      "soobin_end-2": "Soobin en primer plano con camiseta blanca y mirada seria, sobre un fondo lila",
+      "soobin_end-4": "Soobin de frente entre dos integrantes vistos de espaldas, con camisetas blancas sin mangas",
+      "soobin_end-5": "Retrato en blanco y negro de Soobin con camiseta blanca",
+      "taehyun_end-2": "Taehyun en primer plano con camiseta blanca, sobre un fondo lila suave",
+      "taehyun_end-4": "Taehyun apoya la cabeza en el hombro de un integrante de cabello rubio; ambos llevan camisetas blancas",
+      "taehyun_end-5": "Retrato en blanco y negro de Taehyun con camiseta blanca",
+      "yeonjun_end-2": "Yeonjun, de cabello rubio, en primer plano con camiseta blanca sin mangas",
+      "yeonjun_end-4": "Yeonjun, de cabello rubio, apoya el brazo en el hombro de otro integrante; ambos con camisetas blancas",
+      "yeonjun_end-5": "Retrato en blanco y negro de Yeonjun con el cabello claro y camiseta sin mangas",
+      "group_end-1": "Los cinco integrantes de TXT acostados sobre una tela blanca arrugada, con camisetas blancas y pantalones negros",
+      "group_end-12": "Los cinco integrantes de TXT juntos con camisetas blancas, sosteniendo rosas rojas",
+      "beomgyu_hate-1": "Beomgyu con chaqueta de cuero negro sostiene una rosa roja junto a su rostro",
+      "beomgyu_hate-3": "Beomgyu sentado en un sillón negro frente a una pared blanca con pintura negra chorreada y la palabra HATE",
+      "beomgyu_hate-5": "Beomgyu mira a la cámara detrás de un vidrio roto, con ropa de cuero negro",
+      "hueningkai_hate-1": "Hueningkai sentado con ropa de cuero negro en una habitación blanca manchada de pintura negra",
+      "hueningkai_hate-3": "Hueningkai sentado en el suelo entre objetos rotos, frente a una pared con grafitis negros",
+      "hueningkai_hate-5": "Hueningkai mira a través de un vidrio roto, con chaqueta de cuero negro",
+      "soobin_hate-1": "Soobin con chaqueta de cuero negro sostiene un encendedor encendido",
+      "soobin_hate-3": "Soobin recostado en un sofá de cuero negro, vestido de cuero",
+      "soobin_hate-4": "Soobin con la mano cerca del rostro, frente a una pared blanca con pintura negra chorreada",
+      "taehyun_hate-1": "Taehyun en primer plano con chaqueta de cuero negro y correas",
+      "taehyun_hate-2": "Taehyun sentado en una silla frente a una pared con la palabra HATE y pintura negra chorreada",
+      "taehyun_hate-5": "Taehyun mira a la cámara a través de un vidrio roto",
+      "yeonjun_hate-1": "Yeonjun, de cabello rubio y collar de cuero, exhala humo",
+      "yeonjun_hate-2": "Yeonjun, de cabello rubio, con ropa de cuero negro y correas junto a un vidrio roto",
+      "yeonjun_hate-3": "Yeonjun agachado con ropa de cuero negro frente a una pared con pintura negra chorreada",
+      "beomgyu_hate-6": "Foto grupal: los cinco integrantes de TXT con ropa de cuero negro, reunidos alrededor de una rosa roja",
+      "hueningkai_hate-6": "Foto grupal: los cinco integrantes de TXT con chaquetas de cuero negro, muy juntos, uno sostiene una rosa roja",
+      "soobin_hate-6": "Foto grupal: los cinco integrantes de TXT de cuero negro, mirando a la cámara alrededor de una rosa roja",
+      "taehyun_hate-6": "Foto grupal: los cinco integrantes de TXT con ropa de cuero negro, de pie y juntos frente a una pared clara",
+      "yeonjun_hate-6": "Foto grupal: los cinco integrantes de TXT inclinados hacia la rosa roja que sostiene uno de ellos",
+      "beomgyu_mess-1": "Beomgyu en primer plano con collar de cadena y chaqueta clara, bajo una luz roja",
+      "beomgyu_mess-3": "Beomgyu de pie con traje blanco en un callejón, junto a osos de peluche",
+      "beomgyu_mess-4": "Beomgyu acostado sobre bolsas de basura negras dentro de un contenedor",
+      "group_mess-1": "Los cinco integrantes de TXT de pie en un callejón oscuro, vestidos de negro",
+      "group_mess-1v": "Los cinco integrantes de TXT de pie en un pasillo oscuro con paredes de metal, vestidos de negro",
+      "group_mess-2": "Los cinco integrantes de TXT sentados y recostados en un callejón iluminado con luz roja",
+      "group_mess-2v": "Los cinco integrantes de TXT en un callejón con luz roja, vistos desde arriba",
+      "hueningkai_mess-1": "Hueningkai en primer plano con la mano en el mentón y un collar de cadena",
+      "hueningkai_mess-3": "Hueningkai con chaqueta de estampado de leopardo en un callejón",
+      "hueningkai_mess-4": "Hueningkai acostado sobre bolsas de basura dentro de un contenedor",
+      "soobin_mess-1": "Soobin en primer plano con chaqueta de jean frente a un letrero luminoso rojo",
+      "soobin_mess-3": "Soobin de pie con chaleco de jean en un callejón con basura",
+      "soobin_mess-4": "Soobin acostado sobre bolsas de basura dentro de un contenedor",
+      "taehyun_mess-1": "Taehyun en primer plano con chaqueta negra, apoyado en una pared",
+      "taehyun_mess-2": "Taehyun sentado en el suelo de un callejón con grafitis",
+      "taehyun_mess-4": "Taehyun acostado sobre bolsas de basura dentro de un contenedor",
+      "yeonjun_mess-1": "Yeonjun, de cabello rubio, con gorra y abrigo peludo bajo una luz roja",
+      "yeonjun_mess-2": "Yeonjun con abrigo peludo blanco y camisa de encaje en un callejón",
+      "yeonjun_mess-4": "Yeonjun con abrigo blanco, acostado sobre bolsas de basura dentro de un contenedor"
+  };
+
   function crearPolaroid(era, m, x, y, r, L, lejos, vel) {
     const grupal = m === 'Grupal';
     const [w, h] = grupal ? L.grupal : L.pol;
@@ -287,7 +364,7 @@
     marco.className = 'pol__foto';
     fotos.forEach((src, i) => {
       const img = document.createElement('img');
-      img.src = src; img.alt = `${etiqueta} (${i + 1} de ${fotos.length})`; img.loading = 'lazy'; img.decoding = 'async';
+      img.src = src; img.alt = `${ALT_FOTOS[src.split('/').pop().replace(/\.\w+$/, '')] || etiqueta}. Concepto ${era} (foto ${i + 1} de ${fotos.length})`; img.loading = 'lazy'; img.decoding = 'async';
       if (i === indices[key]) img.classList.add('is-visible'); else img.setAttribute('aria-hidden', 'true');
       marco.appendChild(img);
     });
@@ -372,7 +449,7 @@
       b.type = 'button'; b.className = 'tab'; b.id = 'tab-' + era; b.setAttribute('role', 'tab');
       b.setAttribute('aria-controls', 'panel-' + era);
       css(b, { '--x': L.tabs[i][0], '--y': L.tabs[i][1], '--w': L.tab[0], '--h': L.tab[1] });
-      b.innerHTML = `<img class="logo-w" src="assets/img/logos/${era.toLowerCase()}_logo-white.png" alt="${era}"><img class="logo-b" src="assets/img/logos/${era.toLowerCase()}_logo-black.png" alt="${era}">`;
+      b.innerHTML = `<img class="logo-w" src="assets/img/logos/${era.toLowerCase()}_logo-white.png" alt="Logo de la versión ${era}"><img class="logo-b" src="assets/img/logos/${era.toLowerCase()}_logo-black.png" alt="Logo de la versión ${era}">`;
       b.addEventListener('click', () => mostrarEra(era));
       b.addEventListener('keydown', e => {
         if (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft') return;
@@ -417,8 +494,8 @@
         if (E.stk[m]) {
           const [sx, sy, sr] = E.stk[m];
           const st = it('div', 'sticker' + (lejos ? ' sticker--lejos' : ''), sx, sy, L.stk, L.stk, sr);
-          st.dataset.speed = vel; st.setAttribute('aria-hidden', 'true');
-          st.innerHTML = `<img src="assets/img/logos/${m.toLowerCase()}_${era.toLowerCase()}-logo.png" alt="">`;
+          st.dataset.speed = vel;
+          st.innerHTML = `<img src="assets/img/logos/${m.toLowerCase()}_${era.toLowerCase()}-logo.png" alt="Logo de ${m} para la versión ${era}">`;
           pol._sticker = st;
           capa.appendChild(st);
         }
@@ -526,7 +603,7 @@
   }
 
 
-  /* ---------- 9. Merch: filtros, álbumes (unboxing 2D) y camisetas (carrusel por miembro) ---------- */
+  /* ---------- 9. Merch: filtros, álbumes (hover de Figma) y camisetas ---------- */
   const mc = $('.mc-seccion');
   const tactil = window.matchMedia('(hover: none)');
 
@@ -540,86 +617,33 @@
     cerrarAlbumes();
   }));
 
-  // --- Álbumes ---
+  // Tipo de puntero del último toque/clic. Safari (iPhone) reporta el "click" de un toque como mouse,
+  // así que se usa el pointerdown, que sí dice "touch".
+  let ultimoPuntero = 'mouse';
+  document.addEventListener('pointerdown', e => { ultimoPuntero = e.pointerType || 'mouse'; }, true);
+  const esMouse = () => ultimoPuntero === 'mouse' && !tactil.matches;
+
+  // --- Álbumes (Figma): hover / tap cambia la portada por la foto del contenido ---
   const albumes = $$('.album', mc);
-  function armarAlbum(al) {
-    const lista = $('.album__inclusiones', al);
-    const piezas = (window.INCLUSIONES || {})[al.dataset.album] || [];
-    lista.innerHTML = '';
-    al.classList.add('sin-recursos');   // hasta que cargue al menos una inclusión se usa el hover de Figma
-    piezas.forEach((p, i) => {
-      const li = document.createElement('li');
-      li.className = 'inclusion';
-      li.tabIndex = -1;
-      li.setAttribute('aria-label', p.nombre);
-      ['x', 'y', 'w', 'r'].forEach(k => li.style.setProperty('--' + k, p[k]));
-      li.style.setProperty('--z', p.z != null ? p.z : i + 1);
-      li.style.setProperty('--i', i);
-      const img = new Image();
-      img.alt = ''; img.decoding = 'async';
-      // Si el archivo aún no existe, la pieza no se muestra
-      img.onload = () => { li.hidden = false; al.classList.remove('sin-recursos'); };
-      img.onerror = () => { li.remove(); };
-      li.hidden = true;
-      img.src = p.src;
-      li.appendChild(img);
-      lista.appendChild(li);
-    });
-  }
-  // Las piezas salen desde el centro de la portada: calcula ese recorrido en px
-  function origenes(al) {
-    const portada = $('.album__portada', al).getBoundingClientRect();
-    const cx = portada.left + portada.width / 2, cy = portada.top + portada.height / 2;
-    $$('.inclusion', al).forEach(li => {
-      // offsetLeft/Top no incluyen la transformación actual (posición final de la pieza)
-      const x = li.offsetLeft + li.offsetWidth / 2, y = li.offsetTop + li.offsetHeight / 2;
-      const base = al.getBoundingClientRect();
-      li.style.setProperty('--dx', (cx - base.left - x).toFixed(1) + 'px');
-      li.style.setProperty('--dy', (cy - base.top - y).toFixed(1) + 'px');
-    });
-  }
   function abrirAlbum(al) {
-    if (al.classList.contains('is-abierto')) return;
     albumes.forEach(o => { if (o !== al) cerrarAlbum(o); });
-    const lista = $('.album__inclusiones', al);
-    lista.hidden = false;
-    origenes(al);
-    $$('.inclusion', al).forEach(li => { li.tabIndex = 0; });
-    requestAnimationFrame(() => al.classList.add('is-abierto'));
+    al.classList.add('is-abierto');
     $('.album__boton', al).setAttribute('aria-expanded', 'true');
   }
   function cerrarAlbum(al) {
-    if (!al.classList.contains('is-abierto')) return;
     al.classList.remove('is-abierto');
     $('.album__boton', al).setAttribute('aria-expanded', 'false');
-    $$('.inclusion', al).forEach(li => { li.classList.remove('is-elevada'); li.tabIndex = -1; });
-    const lista = $('.album__inclusiones', al);
-    clearTimeout(al._t);
-    al._t = setTimeout(() => { if (!al.classList.contains('is-abierto')) lista.hidden = true; }, 650);
   }
   function cerrarAlbumes() { albumes.forEach(cerrarAlbum); }
-
   albumes.forEach(al => {
-    armarAlbum(al);
-    // Mouse: abre al entrar al área de la foto y se cierra al salir
-    al.addEventListener('pointerenter', e => { if (e.pointerType === 'mouse') { clearTimeout(al._t); abrirAlbum(al); } });
+    al.addEventListener('pointerenter', e => { if (e.pointerType === 'mouse') abrirAlbum(al); });
     al.addEventListener('pointerleave', e => { if (e.pointerType === 'mouse') cerrarAlbum(al); });
-    // Tap / teclado: el botón abre y cierra
-    $('.album__boton', al).addEventListener('click', () => {
+    $('.album__boton', al).addEventListener('click', e => {
+      if (esMouse()) return;   // con mouse ya lo hace el hover
       al.classList.contains('is-abierto') ? cerrarAlbum(al) : abrirAlbum(al);
     });
-    // Tap sobre una pieza: la eleva (otro tap la baja); en mouse lo hace el :hover
-    $('.album__inclusiones', al).addEventListener('click', e => {
-      const li = e.target.closest('.inclusion');
-      if (!li) { cerrarAlbum(al); return; }
-      const on = !li.classList.contains('is-elevada');
-      $$('.inclusion', al).forEach(x => x.classList.remove('is-elevada'));
-      li.classList.toggle('is-elevada', on);
-    });
-    al.addEventListener('keydown', e => { if (e.key === 'Escape') { cerrarAlbum(al); $('.album__boton', al).focus(); } });
-    al.addEventListener('focusout', e => { if (!al.contains(e.relatedTarget) && !al.matches(':hover')) cerrarAlbum(al); });
+    $('.album__boton', al).addEventListener('blur', () => { if (!al.matches(':hover')) cerrarAlbum(al); });
   });
-  // Tap fuera de un álbum abierto: se cierra
   document.addEventListener('pointerdown', e => { if (!e.target.closest('.album')) cerrarAlbumes(); });
 
   // --- Camisetas: carrusel horizontal de 10 tarjetas ---
@@ -648,8 +672,8 @@
     arr = null;
   });
   // Tap / teclado: voltea la camiseta (con mouse lo hace el hover)
-  $$('.camiseta__lado', mc).forEach(b => b.addEventListener('click', e => {
-    if (e.pointerType === 'mouse') return;
+  $$('.camiseta__lado', mc).forEach(b => b.addEventListener('click', () => {
+    if (esMouse()) return;
     const on = b.getAttribute('aria-pressed') !== 'true';
     $$('.camiseta__lado', mc).forEach(x => x.setAttribute('aria-pressed', 'false'));
     b.setAttribute('aria-pressed', String(on));
@@ -683,6 +707,18 @@
   function onScroll() { marcarSeccion(); scrubGrietas(); if (!reduceMotion) { updateVidrio(); updateParallax(); } ticking = false; }
   window.addEventListener('scroll', () => { if (!ticking) { requestAnimationFrame(onScroll); ticking = true; } }, { passive: true });
   let rT;
-  window.addEventListener('resize', () => { clearTimeout(rT); rT = setTimeout(() => { construir(); crearVidrio(); onScroll(); }, 120); });
+  // En el celular la barra del navegador cambia el alto al hacer scroll y dispara "resize":
+  // solo se reconstruye cuando cambia el ancho (si no, el parallax se reinicia mientras bajas).
+  let anchoPrevio = window.innerWidth;
+  window.addEventListener('resize', () => {
+    clearTimeout(rT);
+    rT = setTimeout(() => {
+      if (window.innerWidth !== anchoPrevio) { anchoPrevio = window.innerWidth; construir(); crearVidrio(); }
+      onScroll();
+    }, 120);
+  });
+  // En línea (GitHub Pages) las fuentes e imágenes llegan después: se recalcula al terminar de cargar
+  window.addEventListener('load', onScroll);
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(onScroll);
   onScroll();
 })();

@@ -41,10 +41,3 @@ assets/vendor/fontawesome  → íconos
 
 *Fan site no oficial con fines académicos. Imágenes © BIGHIT MUSIC.*
 
-## Merch: cómo agregar las inclusiones de los álbumes
-1. Guarda los SVG de cada versión en `assets/img/merch/albumes/hate/`, `end/` y `mess/`.
-2. Abre `js/merch-inclusiones.js` y escribe en `src` la ruta de cada SVG
-   (por defecto: `photobook.svg`, `cd.svg`, `lyric.svg`, `photocard.svg`, `sticker.svg`).
-3. En ese mismo archivo ajusta `x`, `y`, `w`, `r` y `z` de cada pieza (posición, ancho, giro y profundidad).
-   Puedes agregar o quitar piezas: la interacción se adapta.
-Mientras no haya ningún SVG, al pasar el cursor se ve la foto del contenido del álbum (el hover de Figma).

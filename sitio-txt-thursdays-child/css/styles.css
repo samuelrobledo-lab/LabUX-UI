@@ -240,7 +240,7 @@ ul, ol { padding: 0; list-style: none; }
 
 /* Elemento posicionado con coordenadas de Figma (x, y en px de Figma; rotación de Figma invertida) */
 .it { position: absolute; left: calc(var(--k) * var(--x)); top: calc(var(--y) * var(--k)); width: calc(var(--k) * var(--w)); height: calc(var(--k) * var(--h));
-  transform-origin: 0 0; transform: translate3d(0, var(--py, 0px), 0) rotate(var(--r, 0deg)); }
+  transform-origin: 0 0; transform: translate3d(0, var(--py, 0px), 0) rotate(var(--r, 0deg)); will-change: transform; }
 
 .cp__panel { background: var(--panel); clip-path: polygon(1.17% 0, 0 39.81%, 1.91% 44.08%, 0 100%, 11.14% 97.57%, 13.49% 100%, 99.27% 99.25%, 100% 64.3%, 97.21% 62.24%, 97.21% 1.68%, 80.79% 1.68%, 71.55% 4.48%); }
 .cp__palabra { font-family: var(--font-display); color: var(--rojo-900); line-height: .95; white-space: nowrap; font-size: calc(var(--k) * var(--fs)); width: auto; height: auto; filter: blur(max(2px, calc(var(--k) * 5))); opacity: .9; }
@@ -416,40 +416,14 @@ ul, ol { padding: 0; list-style: none; }
 .producto__nombre { font-weight: 400; font-size: max(14px, calc(var(--k) * 24)); line-height: 1.3; }
 .producto__precio { font-weight: 700; font-size: max(14px, calc(var(--k) * 22)); line-height: 1.4; white-space: nowrap; }
 
-/* ===== Álbum: unboxing 2D =====
-   Cerrado: solo la portada, centrada. Abierto (hover / tap): la portada se corre a la izquierda
-   y las inclusiones salen de ella hacia la derecha, cada una con su posición, giro y profundidad. */
-.album { --abre: .55s; isolation: isolate; }
-.album__boton { position: absolute; inset: 0; z-index: 3; border: 0; padding: 0; background: transparent; cursor: pointer; border-radius: inherit; }
-.album.is-abierto .album__boton { z-index: 1; }
+/* ===== Álbum (Figma): portada → al pasar el cursor o tocar, foto con el contenido ===== */
 .album { --ins: 32; --ins-c: 20; }
+.album__boton { position: absolute; inset: 0; z-index: 3; border: 0; padding: 0; background: transparent; cursor: pointer; border-radius: inherit; }
 .album__portada, .album__contenido { position: absolute; left: calc(var(--k) * var(--ins)); top: calc(var(--k) * var(--ins)); width: calc(100% - var(--k) * var(--ins) * 2); height: calc(100% - var(--k) * var(--ins) * 2);
-  object-fit: contain; z-index: 2; pointer-events: none; }
-.album__portada { transition: transform var(--abre) var(--ease), opacity .2s var(--ease); }
-.album__contenido { left: calc(var(--k) * var(--ins-c)); top: calc(var(--k) * var(--ins-c)); width: calc(100% - var(--k) * var(--ins-c) * 2); height: calc(100% - var(--k) * var(--ins-c) * 2);
-  opacity: 0; transition: opacity .2s var(--ease); }
-/* Con inclusiones: la portada se corre a la izquierda para dejarles espacio */
-.album.is-abierto:not(.sin-recursos) .album__portada { transform: translateX(-27%) scale(.72); }
-/* Sin inclusiones todavía: hover de Figma (la portada cambia por la foto del contenido) */
-.album.sin-recursos .album__inclusiones { display: none; }
-.album.is-abierto.sin-recursos .album__portada { opacity: 0; }
-.album.is-abierto.sin-recursos .album__contenido { opacity: 1; }
-.album__inclusiones { position: absolute; inset: 0; z-index: 4; pointer-events: none; }
-.album__inclusiones[hidden] { display: block; visibility: hidden; }
-.inclusion {
-  position: absolute; left: calc(var(--x) * 1%); top: calc(var(--y) * 1%); width: calc(var(--w) * 1%); z-index: var(--z);
-  opacity: 0; transform: translate(var(--dx, 0px), var(--dy, 0px)) rotate(0deg) scale(.35);
-  transition: transform .5s var(--ease) var(--sale, 0s), opacity .35s var(--ease) var(--sale, 0s);
-  cursor: pointer; outline: none;
-}
-.inclusion img { display: block; width: 100%; height: auto; pointer-events: none; user-select: none; -webkit-user-drag: none; }
-.album.is-abierto .album__inclusiones { pointer-events: auto; }
-.album.is-abierto .inclusion { opacity: 1; transform: translate(0, 0) rotate(calc(var(--r) * 1deg)) scale(1); --sale: calc(var(--i) * 60ms); }
-/* Pieza señalada: sube, crece y pasa por encima de las demás */
-.album.is-abierto .inclusion:hover, .album.is-abierto .inclusion:focus-visible, .album.is-abierto .inclusion.is-elevada {
-  z-index: 50; transform: translate(0, -7%) rotate(calc(var(--r) * .4deg)) scale(1.14); transition-delay: 0s; transition-duration: .3s;
-}
-.inclusion:focus-visible { outline: 3px solid var(--rojo-900); outline-offset: 3px; }
+  object-fit: contain; z-index: 2; pointer-events: none; transition: opacity .2s var(--ease); }
+.album__contenido { left: calc(var(--k) * var(--ins-c)); top: calc(var(--k) * var(--ins-c)); width: calc(100% - var(--k) * var(--ins-c) * 2); height: calc(100% - var(--k) * var(--ins-c) * 2); opacity: 0; }
+.album.is-abierto .album__portada { opacity: 0; }
+.album.is-abierto .album__contenido { opacity: 1; }
 
 /* ===== Camisetas: carrusel de 10 tarjetas "Card camiseta" (Figma, sin flechas ni puntos) =====
    Hover con mouse (o tap en mobile): se ve la espalda. Con mouse también se puede arrastrar la fila. */
@@ -579,15 +553,15 @@ ul, ol { padding: 0; list-style: none; }
   .dato { width: 23%; border-bottom-width: 3px; }
   .dato__label { font-size: .75rem; }
   .about__parrafo { font-size: 1rem; line-height: 1.62; }
-  .about__foto { width: 49%; justify-self: start; margin-left: 3.5%; margin-top: 8%; }
+  .about__foto { width: 58%; justify-self: center; margin-left: 0; margin-top: 8%; z-index: 1; }
   .titulo-doble { margin-bottom: 4%; }
-  .triangulos--about-a { display: block; left: 46%; bottom: -16%; width: 56%; height: 96%; }
+  /* Fragmentos solo alrededor de la foto, sin tocar el texto */
+  .triangulos--about-a { display: block; left: 0; top: calc(100% + 12px); bottom: auto; width: 100%; height: 100vw; z-index: 0; }
   .triangulos--about-b { display: none; }
-  .triangulos--about-c { display: block; left: 2%; top: -10%; width: 96%; height: 70px; }
-  .grieta--about { width: 92vw; right: 0; bottom: 4%; transform: rotate(200deg); transform-origin: 100% 50%; }
+  .triangulos--about-c { display: none; }
+  .grieta--about { width: 76vw; right: 2vw; bottom: 3%; transform: rotate(200deg); transform-origin: 50% 50%; }
   .hero__nombre { word-spacing: 100vw; }
   .hero__bajada { font-size: 1.125rem; line-height: 1.39; }
-  .grieta--about { width: 70vw; bottom: -4%; }
   .titulo-doble__a { white-space: normal; }
   .seccion-simple__nota { font-size: 1rem; }
 
